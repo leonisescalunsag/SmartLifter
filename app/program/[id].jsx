@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function ProgramDetail() {
   const { id } = useLocalSearchParams();
@@ -78,7 +78,12 @@ export default function ProgramDetail() {
 
   return (
     <View style={styles.container}>
-      {/* Animated Title */}
+      {/* ✅ Logo Top Left */}
+      <View style={styles.logoContainer}>
+        <Image source={require("../../assets/images/logo1.png")} style={styles.logo} />
+      </View>
+
+      {/* ✅ Animated Title */}
       <Animated.Text
         style={[
           styles.title,
@@ -88,6 +93,7 @@ export default function ProgramDetail() {
         Program Details
       </Animated.Text>
 
+      {/* ✅ Exercise List */}
       <FlatList
         data={exercises}
         keyExtractor={(item, index) => index.toString()}
@@ -123,20 +129,6 @@ function AnimatedCard({ item, index }) {
     ]).start();
   }, []);
 
-  const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 1.03,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
-
   return (
     <Animated.View
       style={{
@@ -144,12 +136,7 @@ function AnimatedCard({ item, index }) {
         transform: [{ translateY }, { scale }],
       }}
     >
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={styles.card}
-      >
+      <TouchableOpacity activeOpacity={0.8} style={styles.card}>
         <Text style={styles.exercise}>{item.exercise}</Text>
         <Text style={styles.details}>
           Sets/Reps: {item.sets} • Rest: {item.rest}
@@ -163,16 +150,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0D0D0D",
-    padding: 20,
-    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  logoContainer: {
+    alignItems: "flex-start", // ⬅️ puts logo at left
+    marginBottom: 10,
+  },
+  logo: {
+    width: 130,
+    height: 130,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#00D1FF",
     textAlign: "center",
-    marginBottom: 40,
-    marginTop: 80,
+    marginBottom: 20,
+    marginTop: 10,
   },
   card: {
     backgroundColor: "#1A1A1A",
@@ -197,4 +193,3 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-//11

@@ -44,6 +44,11 @@ export default function SignInScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* 🔙 Back Arrow */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.replace("/")}>
+        <Text style={styles.backArrow}>←</Text>
+      </TouchableOpacity>
+
       <Animated.View
         style={{
           opacity: fadeAnim,
@@ -95,6 +100,17 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#0D0D0D",
+  },
+  backButton: {
+    position: "absolute",
+    top: 15,
+    left: 20,
+    zIndex: 10,
+    padding: 5,
+  },
+  backArrow: {
+    fontSize: 50,
+    color: "#00D1FF",
   },
   scrollContainer: {
     flexGrow: 1,

@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { auth } from "../../firebaseConfig";
 
-// ✅ Fixed imports (correct names & spelling)
 import PPLImage from "../../assets/images/PPL.jpg";
 import ArmsImage from "../../assets/images/arms.webp";
 import Fullimage from "../../assets/images/full.webp";
@@ -25,7 +24,6 @@ import StrengthImage from "../../assets/images/strength.webp";
 export default function ProgramScreen() {
   const router = useRouter();
 
-  // 🔹 Header animation
   const headerFade = useRef(new Animated.Value(0)).current;
   const headerTranslate = useRef(new Animated.Value(-20)).current;
 
@@ -54,61 +52,34 @@ export default function ProgramScreen() {
   };
 
   const workoutPrograms = [
-    {
-      id: "ppl",
-      title: "Push Pull Legs",
-      description: "Classic 6-day hypertrophy split.",
-      image: PPLImage,
-    },
-    {
-      id: "fbb",
-      title: "Full Body Beginner",
-      description: "3x/week, all major muscle groups.",
-      image: Fullimage,
-    },
-    {
-      id: "arms",
-      title: "Arms Blast",
-      description: "Grow biceps & triceps with high-volume training.",
-      image: ArmsImage,
-    },
-    {
-      id: "shoulders",
-      title: "Shoulder Builder",
-      description: "Sculpt wide shoulders with presses & raises.",
-      image: ShouldersImage,
-    },
-    {
-      id: "strength",
-      title: "Strength Focus",
-      description: "Heavy lifts to build raw strength.",
-      image: StrengthImage,
-    },
-    {
-      id: "hiit",
-      title: "HIIT & Conditioning",
-      description: "Burn fat with short, intense sessions.",
-      image: HiitImage,
-    },
+    { id: "ppl", title: "Push Pull Legs", description: "Classic 6-day hypertrophy split.", image: PPLImage },
+    { id: "fbb", title: "Full Body Beginner", description: "3x/week, all major muscle groups.", image: Fullimage },
+    { id: "arms", title: "Arms Blast", description: "Grow biceps & triceps with high-volume training.", image: ArmsImage },
+    { id: "shoulders", title: "Shoulder Builder", description: "Sculpt wide shoulders with presses & raises.", image: ShouldersImage },
+    { id: "strength", title: "Strength Focus", description: "Heavy lifts to build raw strength.", image: StrengthImage },
+    { id: "hiit", title: "HIIT & Conditioning", description: "Burn fat with short, intense sessions.", image: HiitImage },
   ];
 
   return (
     <View style={styles.container}>
-      {/* 🔹 Animated Header */}
+      {/* 🔹 Header with logo + logout */}
       <Animated.View
         style={[
           styles.header,
-          {
-            opacity: headerFade,
-            transform: [{ translateY: headerTranslate }],
-          },
+          { opacity: headerFade, transform: [{ translateY: headerTranslate }] },
         ]}
       >
-        <Text style={styles.title}>Workout Programs</Text>
+        {/* Logo Left */}
+        <Image source={require("../../assets/images/logo1.png")} style={styles.logo} />
+
+        {/* Logout Right */}
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </Animated.View>
+
+      {/* Title Below Header */}
+      <Text style={styles.title}>Workout Programs</Text>
 
       <FlatList
         data={workoutPrograms}
@@ -133,13 +104,12 @@ function ProgramCard({ program, index, onPress }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
 
-  // 🔹 Animate on mount (staggered by index)
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 400,
-        delay: index * 120, // stagger for each card
+        delay: index * 120,
         useNativeDriver: true,
       }),
       Animated.spring(translateY, {
@@ -152,10 +122,7 @@ function ProgramCard({ program, index, onPress }) {
   }, []);
 
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 1.05,
-      useNativeDriver: true,
-    }).start();
+    Animated.spring(scale, { toValue: 1.05, useNativeDriver: true }).start();
   };
 
   const handlePressOut = () => {
@@ -181,7 +148,6 @@ function ProgramCard({ program, index, onPress }) {
         onPressOut={handlePressOut}
         style={styles.programCard}
       >
-        {/* ✅ Local image - no {uri: ...} */}
         <Image source={program.image} style={styles.programImage} />
         <Text style={styles.programTitle}>{program.title}</Text>
         <Text style={styles.programDesc}>{program.description}</Text>
@@ -200,16 +166,22 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   header: {
-    flexDirection: "row",
+    flexDirection: "row", // ✅ logo left + logout right
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#00D1FF",
-    marginTop: 60,
+    marginBottom: 20,
+    textAlign: "center",
   },
   logoutBtn: {
     backgroundColor: "#3ceb25c2",
@@ -220,7 +192,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 5,
-    marginTop: 60,
   },
   logoutText: {
     color: "#fff",
@@ -241,7 +212,7 @@ const styles = StyleSheet.create({
   programImage: {
     width: "100%",
     height: CARD_SIZE * 0.9,
-    resizeMode: "cover", // Better for local images
+    resizeMode: "cover",
     backgroundColor: "#111",
   },
   programTitle: {

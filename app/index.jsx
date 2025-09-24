@@ -1,94 +1,160 @@
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 
-export default function GetStartedScreen() {
+export default function GetStarted() {
   const router = useRouter();
 
-  // 🎬 Animations
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(40)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
+  // 🔹 Animations
+  const logoScale = useRef(new Animated.Value(0.8)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const quoteOpacity = useRef(new Animated.Value(0)).current;
+  const quoteTranslate = useRef(new Animated.Value(20)).current;
+  const buttonTranslate = useRef(new Animated.Value(50)).current;
+  const buttonOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
+    // Run animations in sequence
+    Animated.sequence([
+      // Logo first
+      Animated.parallel([
+        Animated.timing(logoOpacity, {
+          toValue: 1,
+          duration: 700,
+          useNativeDriver: true,
+        }),
+        Animated.spring(logoScale, {
+          toValue: 1,
+          friction: 4,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Quote second
+      Animated.parallel([
+        Animated.timing(quoteOpacity, {
+          toValue: 1,
+          duration: 600,
+          delay: 100,
+          useNativeDriver: true,
+        }),
+        Animated.spring(quoteTranslate, {
+          toValue: 0,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Button last
+      Animated.parallel([
+        Animated.timing(buttonOpacity, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.spring(buttonTranslate, {
+          toValue: 0,
+          friction: 6,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]),
     ]).start();
   }, []);
 
-  const handlePressIn = () => {
-    Animated.spring(buttonScale, { toValue: 0.95, useNativeDriver: true }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(buttonScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start();
-    router.push("/signin");
-  };
-
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
-      ]}
+    <ImageBackground
+      source={require("../assets/images/bj.png")}
+      style={styles.background}
+      blurRadius={2}
     >
-      <Text style={styles.title}>SmartLifter</Text>
-      <Text style={styles.subtitle}>
-        "Strength is built one rep at a time. Let's start your journey."
-      </Text>
+      <View style={styles.overlay}>
+        {/* 🔹 Logo with Animation */}
+        <Animated.Image
+          source={require("../assets/images/logo1.png")}
+          style={[
+            styles.logo,
+            { opacity: logoOpacity, transform: [{ scale: logoScale }] },
+          ]}
+        />
 
-      <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-        <TouchableOpacity
-          style={styles.button}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          activeOpacity={0.8}
+        {/* 🔹 Quote with Fade + Slide */}
+        <Animated.Text
+          style={[
+            styles.quote,
+            { opacity: quoteOpacity, transform: [{ translateY: quoteTranslate }] },
+          ]}
         >
-          <Text style={styles.buttonText}>Get Started</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </Animated.View>
+          "Stronger every day. Your journey starts here."
+        </Animated.Text>
+
+        {/* 🔹 Button with Slide Up + Fade */}
+        <Animated.View
+          style={{
+            opacity: buttonOpacity,
+            transform: [{ translateY: buttonTranslate }],
+          }}
+        >
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => router.push("/signin")}
+          >
+            <Text style={styles.buttonText}>Get Started</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: "#0D0D0D",
     justifyContent: "center",
     alignItems: "center",
-    padding: 30,
   },
-  title: {
-    fontSize: 42,
-    fontWeight: "bold",
-    color: "#00D1FF",
-    marginBottom: 15,
-    letterSpacing: 1.5,
+  overlay: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
-  subtitle: {
-    fontSize: 18,
+  logo: {
+    width: 200,
+    height: 250,
+    resizeMode: "contain",
+    marginBottom: 10,
+    marginTop: 30,
+  },
+  quote: {
+    color: "#fff",
+    fontSize: 20,
     textAlign: "center",
-    color: "#CCCCCC",
-    marginBottom: 50,
-    lineHeight: 24,
+    fontWeight: "600",
+    marginBottom: 40,
+    marginTop: 5,
+    fontFamily: "serif",
   },
   button: {
-    backgroundColor: "#00D1FF",
+    backgroundColor: "#00BFFF",
     paddingVertical: 15,
     paddingHorizontal: 60,
     borderRadius: 30,
-    shadowColor: "#00D1FF",
-    shadowOpacity: 0.5,
-    shadowRadius: 15,
-    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
   },
   buttonText: {
-    color: "#0D0D0D",
+    color: "#000",
     fontSize: 20,
     fontWeight: "bold",
     textTransform: "uppercase",
